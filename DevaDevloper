@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>DevaDevloper Store</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* MATRIX */
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    /* LOGO */
+    .logo-anime {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 60px;
+      z-index: 9999;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 500px;
+      margin: 80px auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,255,255,.2);
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #00ffff;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input {
+      background: #000;
+      color: #fff;
+      border: 1px solid #00ffff;
+    }
+
+    button {
+      background: linear-gradient(45deg,#00ffff,#0066ff);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .product {
+      border: 1px solid #00ffff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+      background: #0a0a0a;
+    }
+
+    .product img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    #productPage {
+      display: none;
+    }
+
+    .logout {
+      background: red;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<img src="img/anime-hacker.png" class="logo-anime" alt="Logo">
+
+<!-- LOGIN -->
+<div class="container" id="loginPage">
+  <h2>Login</h2>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="loginMessage" style="color:red;text-align:center;"></p>
+</div>
+
+<!-- PRODUK -->
+<div class="container" id="productPage">
+  <h2>DevaDevloper Store</h2>
+
+  <div class="product">
+    <h3>💳 PAYMENT QRIS</h3>
+    <button onclick="bukaQRIS(50000)">Bayar Sekarang</button>
+
+    <div id="qrisPopup" style="display:none;text-align:center;margin-top:15px;">
+      <img src="img/qris-dev-store.jpg" style="max-width:300px">
+      <p>Nominal: <b>Rp<span id="nominal"></span></b></p>
+      <p id="timer" style="color:#00ff99;"></p>
+    </div>
+  </div>
+
+  <div class="product">
+    <img src="img/anime-hacker.png">
+    <h3>Aplikasi Bug Otax</h3>
+    <p>Harga: Rp50.000</p>
+    <a href="https://wa.me/6287881538701?text=Halo+Admin+DevaDevloper,+saya+mau+order+Aplikasi+Bug+Otax">
+      <button>ORDER VIA WHATSAPP</button>
+    </a>
+  </div>
+
+  <div class="product">
+    <h3>📤 Konfirmasi Pembayaran</h3>
+    <input type="file" id="bukti">
+    <button onclick="kirimBukti()">Kirim Bukti</button>
+    <p id="notif" style="display:none;color:#00ff99;text-align:center;">✔ Bukti siap dikirim</p>
+  </div>
+
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<script>
+/* LOGIN */
+const USERNAME="DevaDevloper", PASSWORD="DevaDevloper";
+function login(){
+  if(username.value===USERNAME && password.value===PASSWORD){
+    loginPage.style.display="none";
+    productPage.style.display="block";
+  }else loginMessage.innerText="Login salah!";
+}
+function logout(){
+  productPage.style.display="none";
+  loginPage.style.display="block";
+}
+
+/* QRIS + TIMER */
+function bukaQRIS(n){
+  qrisPopup.style.display="block";
+  nominal.innerText=n.toLocaleString("id-ID");
+  let t=300;
+  let i=setInterval(()=>{
+    timer.innerText=`Selesaikan pembayaran ${Math.floor(t/60)}:${t%60<10?"0":""}${t%60}`;
+    if(--t<0){clearInterval(i);qrisPopup.style.display="none";}
+  },1000);
+}
+
+/* WA */
+function kirimBukti(){
+  if(!bukti.files[0]) return alert("Upload bukti dulu");
+  notif.style.display="block";
+  window.open("https://wa.me/6287881538701?text=Saya+sudah+bayar");
+}
+
+/* MATRIX */
+const c=matrix,ctx=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;
+let drops=Array(Math.floor(c.width/14)).fill(1);
+setInterval(()=>{
+  ctx.fillStyle="rgba(0,0,0,.05)";
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle="#00ff99";
+  ctx.font="14px monospace";
+  drops.forEach((y,i)=>{
+    ctx.fillText("01"[Math.random()*2|0],i*14,y*14);
+    drops[i]=y*14>c.height&&Math.random()>0.975?0:y+1;
+  });
+},35);
+</script>
+
+</body>
+</html>
